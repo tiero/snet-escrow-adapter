@@ -1,15 +1,18 @@
 const Web3      = require('web3');
+const protobuf = require('protocol-buffers');
 
 const JobAbi    = require('singularitynet-platform-contracts/abi/Job.json');
 const AgentAbi  = require('singularitynet-platform-contracts/abi/Agent.json');
 
 
 class EscrowAdapter {
-
-  constructor({ network }) {
+  //fs.readFileSync(file.proto)
+  constructor({ network, proto }) {
 
     if (!validateNetwork(network))
       throw "Missing network"
+
+    try { this.messages = protobuf(proto) } catch (e) { throw e };
     
     this.network  = network;
     this.web3     = new Web3(new Web3.providers.HttpProvider(`https://${network}.infura.io`));
@@ -23,7 +26,10 @@ class EscrowAdapter {
     return [event.transactionHash, blockTimestamp];
   }
 
-  async process({ jobAddress }) {
+  async process({ InputBuffer }) {
+
+    const Input = this.messages.Input.decode(InputBuffer);
+    const jobAddress = Input.job_address;
 
     if (!jobAddress) 
       throw "Missing jobAddress";
@@ -43,17 +49,25 @@ class EscrowAdapter {
     const [depositReference, depositTimestamp]  = await this.getTxHashByEvent(JobContract, 'JobFunded');
     const [withdrawReference, withdrawTimestamp]  = await this.getTxHashByEvent(JobContract, 'JobCompleted');
 
-    return {
+    const Output =  {
       value,
-      state: Object.values(STATE)[jobState],
       consumer,
-      ownerAddress,
-      agentAddress,
-      depositReference,
-      depositTimestamp,
-      withdrawReference,
-      withdrawTimestamp
-    }; 
+      agent: agentAddress,
+      owner: ownerAddress,
+      state: Object.keys(STATE)[jobState],
+      deposit: {
+        hash: depositReference,
+        timestamp: depositTimestamp
+      },
+      withdraw: {
+        hash: withdrawReference,
+        timestamp: withdrawTimestamp
+      }
+    };
+
+    const OutputBuffer = this.messages.Output.encode(Output);
+
+    return { OutputBuffer };
   }
 
 } 

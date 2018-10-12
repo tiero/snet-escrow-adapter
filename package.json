@@ -8,6 +8,7 @@
     "test": "node test.js"
   },
   "dependencies": {
+    "protocol-buffers": "^4.1.0",
     "singularitynet-platform-contracts": "^0.2.1",
     "web3": "1.0.0-beta.31"
   }
