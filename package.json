@@ -1,0 +1,11 @@
+{
+  "name": "singularitynet-escrow-adapter",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "SingularityNET Team",
+  "license": "MIT",
+  "dependencies": {
+    "singularitynet-platform-contracts": "^0.2.1",
+    "web3": "1.0.0-beta.31"
+  }
+}
