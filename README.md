@@ -37,7 +37,7 @@ yarn add https://github.com/tiero/snet-escrow-adapter
 
 ```js
 //Import as module
-const { EscrowAdapter }  = require('singularitynet-escrow-adapter');
+const EscrowAdapter = require('singularitynet-escrow-adapter');
 //New instance of adapter using Kovan testnet
 const adapter = new EscrowAdapter({ network: 'kovan' });
 

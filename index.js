@@ -48,4 +48,4 @@ function validateNetwork(network) {
   }
 }
 
-module.exports.EscrowAdapter = EscrowAdapter;
+module.exports = EscrowAdapter;
